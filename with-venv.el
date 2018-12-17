@@ -131,20 +131,22 @@ If none found return nil."
 
 ;;;###autoload
 (defun with-venv-advice-add (func)
-  "Setup advice so that FUNC uses `with-env' macro when executing."
+  "Setup advice so that FUNC use `with-env' macro when executing."
   (advice-add func
               :around
               'with-venv--advice-around))
 
 ;;;###autoload
 (defun with-venv-advice-remove (func)
-  "Remove advice added by `with-venv-advice-add'."
+  "Remove advice FUNC added by `with-venv-advice-add'."
   (advice-remove func
                  'with-venv--advice-around))
 
 (defun with-venv--advice-around (orig-func &rest args)
   "Function to be used to advice functions with `with-venv-advice-add'.
-When a function is adviced with this function, it is wrapped with `with-venv'."
+When a function is adviced with this function, it is wrapped with `with-venv'.
+
+ORIG-FUNC is a target function, and ARGS is the argument when it was called."
   (with-venv
    (apply orig-func args)))
 
