@@ -3,13 +3,15 @@
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
 ;; URL: https://github.com/10sr/with-venv-el
 ;; Version: 0.0.1
-;; Keywords: utility python venv
+;; Keywords: processes python venv
+;; Package-Requires: ((cl-lib "0.5") (emacs "24.4"))
 
 ;; This file is not part of GNU Emacs.
 
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.
 ;;   You may obtain a copy of the License at
+
 ;;
 ;;   http://www.apache.org/licenses/LICENSE-2.0
 ;;
