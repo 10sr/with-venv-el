@@ -19,7 +19,7 @@ Execute body with Python virtual environment enabled with `with-venv-dir` macro:
 ```
 
 
-Alternatively, make library try to find venv directory automatically
+Alternatively, make this package try to find venv directory automatically
 with `with-venv`:
 
 ``` emacs-lisp
