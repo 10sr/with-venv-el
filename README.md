@@ -35,7 +35,7 @@ Or, you can set buffer-local vairable `with-venv-venv-dir` to explicitly
 specify which venv directory to use.
 
 
-If you always enable `with-venv` for certain functions, you can use
+If you want to always enable `with-venv` for certain functions, you can use
 `with-venv-advice-add`:
 
 ``` emacs-lisp
@@ -44,8 +44,7 @@ If you always enable `with-venv` for certain functions, you can use
 
 Adviced functions are always wrapped with `with-venv` macro when called.
 
-To remove advices added with `with-venv-advice-add`, you can use
-`with-venv-advice-remove`.
+To remove these advices, you can use `with-venv-advice-remove`.
 
 
 License
