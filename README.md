@@ -1,4 +1,4 @@
-with-venv-el
+with-venv.el
 ============
 
 Execute with Python virtual environment enabled
@@ -8,7 +8,7 @@ Usage
 -----
 
 
-Execute body inside of Python virtual environment with `with-venv-dir`:
+Execute body with Python virtual environment enabled with `with-venv-dir` macro:
 
 ``` emacs-lisp
 (with-venv-dir (expand-file-name ".venv" default-directory)
@@ -16,7 +16,8 @@ Execute body inside of Python virtual environment with `with-venv-dir`:
 ```
 
 
-Alternatively, make library try to find venv dir automatically with `with-venv`:
+Alternatively, make library try to find venv directory automatically
+with `with-venv`:
 
 ``` emacs-lisp
 (with-venv
@@ -24,14 +25,14 @@ Alternatively, make library try to find venv dir automatically with `with-venv`:
 ```
 
 
-This macro uses `with-venv-find-venv-dir` to find suitable venv dir:
+This macro uses `with-venv-find-venv-dir` to find suitable venv directory:
 this function currently support `pipenv`, `poetry`, and any directory
 named `.venv`.
 Or, you can set buffer-local vairable `with-venv-venv-dir` to explicitly
 specify which venv directory to use.
 
 
-If you always enable `with-venv` for certain function, you can use
+If you always enable `with-venv` for certain functions, you can use
 `with-venv-advice-add`:
 
 ``` emacs-lisp
@@ -48,3 +49,4 @@ License
 -------
 
 This software is licensed under Apache License 2.0 . See `LICENSE` for details.
+
