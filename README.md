@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/10sr/with-venv-el.svg?branch=master)](https://travis-ci.org/10sr/with-venv-el)
+
+
 with-venv.el
 ============
 
