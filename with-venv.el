@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (defvar-local with-venv-venv-dir
   nil
   "Venv directory path.
