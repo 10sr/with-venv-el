@@ -29,7 +29,7 @@ with `with-venv`:
 
 
 This macro uses `with-venv-find-venv-dir` to find suitable venv directory:
-this function currently support `pipenv`, `poetry`, and any directory
+this function currently support `pipenv`, `poetry`, and can find directories
 named `.venv`.
 Or, you can set buffer-local vairable `with-venv-venv-dir` to explicitly
 specify which venv directory to use.
