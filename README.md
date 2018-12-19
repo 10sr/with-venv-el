@@ -4,14 +4,14 @@
 with-venv.el
 ============
 
-Execute with Python virtual environment enabled
+Execute with Python virtual environment activatedd
 
 
 Usage
 -----
 
 
-Execute body with Python virtual environment enabled with `with-venv-dir` macro:
+Execute BODY with Python virtual environment activated with `with-venv-dir` macro:
 
 ``` emacs-lisp
 (with-venv-dir (expand-file-name ".venv" default-directory)
