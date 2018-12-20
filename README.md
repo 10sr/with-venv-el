@@ -4,7 +4,7 @@
 with-venv.el
 ============
 
-Execute with Python virtual environment activatedd
+Execute with Python virtual environment activated
 
 
 Usage
