@@ -26,14 +26,14 @@
 ;; Execute BODY with Python virtual environment activated with `with-venv-dir' macro:
 
 ;; (with-venv-dir (expand-file-name ".venv" default-directory)
-;;     (executable-find "python"))
+;;   (executable-find "python"))
 
 
 ;; Alternatively, make this package try to find venv directory automatically
 ;; with `with-venv':
 
 ;; (with-venv
-;;     (executable-find "python"))
+;;   (executable-find "python"))
 
 
 ;; This macro uses `with-venv-find-venv-dir' to find suitable venv directory:
@@ -71,7 +71,7 @@ python environment.")
 
 This macro does not check if DIR is a valid python environemnt.
 If dir is nil, execute BODY as usual."
-  (declare (indent 2) (debug t))
+  (declare (indent 1) (debug t))
   `(let ((--with-venv-process-environment-orig (cl-copy-list process-environment))
          (--with-venv-exec-path-orig (cl-copy-list exec-path)))
      (unwind-protect
@@ -102,14 +102,14 @@ If dir is nil, execute BODY as usual."
 
 This function tries to find suitable venv dir, or run BODY as usual when no
 suitable environment was found."
-  (declare (indent 1) (debug t))
+  (declare (indent 0) (debug t))
   `(with-venv-dir
        ;; If set explicitly use it
        (or with-venv-venv-dir
            ;; Check previously used directory
            (with-venv-check-exists with-venv-previously-used)
            (setq with-venv-previously-used (with-venv-find-venv-dir)))
-       ,@body))
+     ,@body))
 
 (defun with-venv-find-venv-dir (&optional dir)
   "Try to find venv dir for DIR.
@@ -180,7 +180,7 @@ When a function is adviced with this function, it is wrapped with `with-venv'.
 
 ORIG-FUNC is the target function, and ARGS is the argument when it was called."
   (with-venv
-      (apply orig-func args)))
+    (apply orig-func args)))
 
 (provide 'with-venv)
 

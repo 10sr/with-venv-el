@@ -15,7 +15,7 @@ Execute BODY with Python virtual environment activated with `with-venv-dir` macr
 
 ``` emacs-lisp
 (with-venv-dir (expand-file-name ".venv" default-directory)
-    (executable-find "python"))
+  (executable-find "python"))
 ```
 
 
@@ -24,7 +24,7 @@ with `with-venv`:
 
 ``` emacs-lisp
 (with-venv
-    (executable-find "python"))
+  (executable-find "python"))
 ```
 
 
