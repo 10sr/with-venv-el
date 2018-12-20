@@ -55,6 +55,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'nadvice)
 
 (defvar-local with-venv-venv-dir
   nil
