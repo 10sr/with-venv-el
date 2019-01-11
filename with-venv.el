@@ -73,25 +73,27 @@ python environment.")
 This macro does not check if DIR is a valid python environemnt.
 If dir is nil, execute BODY as usual."
   (declare (indent 1) (debug t))
-  `(let ((--with-venv-process-environment-orig (cl-copy-list process-environment))
-         (--with-venv-exec-path-orig (cl-copy-list exec-path)))
-     (unwind-protect
-         (progn
-           (when ,dir
-             (let* ((dir (file-name-as-directory ,dir))
-                    (bin (expand-file-name "bin" dir)))
-               ;; Do the same thing that bin/activate does
-               (setq exec-path
-                     (cons bin
-                           exec-path))
-               (setenv "VIRTUAL_ENV" dir)
-               (setenv "PATH" (concat bin ":" (or (getenv "PATH") "")))
-               (setenv "PYTHONHOME")))
-           ,@body)
-       (setq process-environment
-             --with-venv-process-environment-orig)
-       (setq exec-path
-             --with-venv-exec-path-orig))))
+  (let ((dirval (cl-gensym)))
+    `(let ((,dirval dir)
+           (--with-venv-process-environment-orig (cl-copy-list process-environment))
+           (--with-venv-exec-path-orig (cl-copy-list exec-path)))
+       (unwind-protect
+           (progn
+             (when ,dirval
+               (let* ((dir (file-name-as-directory ,dirval))
+                      (bin (expand-file-name "bin" dir)))
+                 ;; Do the same thing that bin/activate does
+                 (setq exec-path
+                       (cons bin
+                             exec-path))
+                 (setenv "VIRTUAL_ENV" dir)
+                 (setenv "PATH" (concat bin ":" (or (getenv "PATH") "")))
+                 (setenv "PYTHONHOME")))
+             ,@body)
+         (setq process-environment
+               --with-venv-process-environment-orig)
+         (setq exec-path
+               --with-venv-exec-path-orig)))))
 
 
 (defvar-local with-venv-previously-used nil
