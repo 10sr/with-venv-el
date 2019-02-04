@@ -132,7 +132,7 @@ If none found return nil."
   (with-temp-buffer
     (when dir
       (cd dir))
-    (run-hook-with-args-until-success with-venv-find-venv-dir-functions)))
+    (run-hook-with-args-until-success 'with-venv-find-venv-dir-functions)))
 
 (defun with-venv-find-venv-dir-pipenv ()
   "Try to find venv dir via pipenv."
