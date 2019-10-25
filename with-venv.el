@@ -63,8 +63,9 @@
 
 This variable is intended to be explicitly set by user.
 When nil, `with-venv' tries to find suitable venv dir.
-When this variable is set , use this value without checking if it is a valid
-python environment.")
+When empty string (\"\"), it means that venv is not available for this buffer.
+When this variable is set to non-empty string, use this value without checking
+if it is a valid python environment.")
 
 ;;;###autoload
 (defmacro with-venv-dir (dir &rest body)
