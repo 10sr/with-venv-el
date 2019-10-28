@@ -14,12 +14,14 @@ OBJS := $(SRCS:.el=.elc)
 $(OBJS): %.elc: %.el
 	$(EMACS) $(BATCHFLAGS) -f batch-byte-compile $^
 
-.PHONY: all clean test test-ert
+.PHONY: all clean check test test-ert
 
 all: $(OBJS)
 
 clean:
 	-rm -f $(OBJS)
+
+check: test
 
 test: test-ert $(OBJS)
 
