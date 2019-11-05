@@ -72,7 +72,7 @@ if it is a valid python environment.")
   "Set python environment to DIR and execute BODY.
 
 This macro does not check if DIR is a valid python environemnt.
-If dir is nil, execute BODY as usual."
+If dir is nil or empty string (\"\"), execute BODY as usual."
   (declare (indent 1) (debug t))
   (let ((dirval (cl-gensym)))
     `(let ((,dirval ,dir)
@@ -80,7 +80,9 @@ If dir is nil, execute BODY as usual."
            (--with-venv-exec-path-orig (cl-copy-list exec-path)))
        (unwind-protect
            (progn
-             (when ,dirval
+             (when (and ,dirval
+                        (not (string= ,dirval
+                                      "")))
                (let* ((dir (file-name-as-directory ,dirval))
                       (bin (expand-file-name "bin" dir)))
                  ;; Do the same thing that bin/activate does
@@ -98,26 +100,49 @@ If dir is nil, execute BODY as usual."
 
 
 (defvar-local with-venv-previously-used nil
-  "Previously used venv dir path.")
+  "Previously used venv dir path.
+Set by `with-venv' macro using `with-venv-find-venv-dir-functions'.")
 
 ;;;###autoload
 (defmacro with-venv (&rest body)
   "Execute BODY with venv enabled.
 
 This function tries to find suitable venv dir, or run BODY as usual when no
-suitable environment was found."
+suitable environment was found.
+
+This function calls `with-venv-find-venv-dir' and set the return value to
+`with-venv-previously-used'.
+When suitable venv was not found, set empty string (\"\") to
+`with-venv-previously-used', and `with-venv' no more tries to find venv
+directory.
+
+If you want this library to explicitly search for venv dir again, call
+`with-venv-refresh-dir' command manually."
   (declare (indent 0) (debug t))
   `(with-venv-dir
        ;; If set explicitly use it
        (or with-venv-venv-dir
            ;; Check previously used directory
-           (with-venv-check-exists with-venv-previously-used)
-           (setq with-venv-previously-used (with-venv-find-venv-dir)))
+           (if (string= ""
+                        with-venv-previously-used)
+               nil
+             (or with-venv-previously-used
+                 (with-venv-refresh-dir))))
      ,@body))
+
+  (defun with-venv-refresh-dir ()
+    "Search for venv dir again and set `with-venv-previously-used'.
+
+Return value of `with-venv-previously-used'."
+    (interactive)
+    (setq with-venv-previously-used (or (with-venv-find-venv-dir)
+                                        "")))
 
 (defcustom with-venv-find-venv-dir-functions
   nil
-  "Functions to find venv dir."
+  "Functions to find venv dir.
+
+See `with-venv-find-venv-dir' how this variable is used."
   :type 'hook
   :group 'with-venv)
 (add-hook 'with-venv-find-venv-dir-functions
@@ -129,7 +154,10 @@ suitable environment was found."
 
 (defun with-venv-find-venv-dir (&optional dir)
   "Try to find venv dir for DIR.
-If none found return nil."
+If none found return nil.
+
+This function processes `with-venv-find-venv-dir-functions' with
+`run-hook-with-args-until-success'."
   (with-temp-buffer
     (when dir
       (cd dir))
@@ -165,7 +193,8 @@ If none found return nil."
                         dir))))
 
 (defun with-venv-check-exists (dir)
-  "Return DIR as is if \"bin\" directory was found under DIR."
+  "Return DIR as is if \"bin\" directory was found under DIR.
+Otherwise returns nil."
   (and dir
        (file-directory-p (expand-file-name "bin"
                                            dir))
