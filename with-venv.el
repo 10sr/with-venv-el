@@ -101,29 +101,24 @@ If dir is nil or empty string (\"\"), execute BODY as usual."
 
 (defvar-local with-venv--venv-dir-found nil
   "Previously used venv dir path.
-Set by `with-venv' macro using `with-venv-find-venv-dir-functions'.
+Set by `with-venv-get-buffer-dir' using `with-venv-find-venv-dir-functions'.
 
 Default value nil means that venv search has not done for this buffer yet.
 When empty string (\"\"), it means that venv is not available for this buffer.
-To force search venv again, run `with-venv-search-dir' manually.
+To force search venv again, run `with-venv-get-buffer-dir' manually.
 ")
 
 ;;;###autoload
 (defmacro with-venv (&rest body)
-  ;; TODO: Fix doc
   "Execute BODY with venv enabled.
 
 This function tries to find suitable venv dir, or run BODY as usual when no
 suitable environment was found.
 
-This function calls `with-venv-find-venv-dir' and set the return value to
-`with-venv--venv-dir-found'.
-When suitable venv was not found, set empty string (\"\") to
-`with-venv--venv-dir-found', and `with-venv' no more tries to find venv
-directory.
-
-If you want this library to explicitly search for venv dir again, call
-`with-venv-search-dir' command manually."
+This function calls `with-venv-get-buffer-dir' with no-refresh enabled to
+search venv dir for current buffer.
+The result will be cached so this search won't be done any more for current
+session unless you explicitly invoke `with-venv-get-buffer-dir' command manually."
   (declare (indent 0) (debug t))
   `(with-venv-dir
        ;; If set explicitly use it
@@ -132,18 +127,23 @@ If you want this library to explicitly search for venv dir again, call
            (if (string= ""
                         with-venv--venv-dir-found)
                nil
-             (or with-venv--venv-dir-found
-                 (with-venv-search-dir))))
+             (with-venv-get-buffer-dir t)))
      ,@body))
 
-(defun with-venv-refresh-buffer-dir ()
-  "Search for venv dir and set `with-venv--venv-dir-found'.
+(defun with-venv-get-buffer-dir (&optional no-refresh)
+  "Search for venv dir and set it to `with-venv--venv-dir-found'.
+
+If optional arg NO-REFRESH is non-nil and `with-venv--venv-dir-found' is
+already set, do not research venv dir again.
 
 If suitable dir not found, set the value to empty string (\"\").
 Return value of `with-venv--venv-dir-found'."
   (interactive)
-  (setq with-venv--venv-dir-found (or (with-venv-find-venv-dir)
-                                 "")))
+  (unless (and with-venv--venv-dir-found
+               no-refresh)
+    (setq with-venv--venv-dir-found (or (with-venv-find-venv-dir)
+                                        "")))
+  with-venv--venv-dir-found)
 
 (defcustom with-venv-find-venv-dir-functions
   nil
