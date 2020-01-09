@@ -36,21 +36,21 @@
 ;;   (executable-find "python"))
 
 
-;; This macro uses `with-venv-find-venv-dir' to find suitable venv directory:
-;; this function currently support pipenv, poetry, and can find directories
-;; named ".venv".
+;; This macro uses `with-venv-find-venv-dir-functions' to find suitable venv
+;; directory: this function currently support pipenv, poetry, and can find
+;; directories named ".venv".
 ;; Or, you can set buffer-local vairable `with-venv-venv-dir' to explicitly
-;; specify which venv directory to use.
+;; specify path to venv directory.
 
 
-;; If you want to always enable `with-venv' for certain functions, you can use
-;; `with-venv-advice-add':
+;; If you want to always enable `with-venv' for certain functions,
+;; `with-venv-advice-add' can be used for this purpose:
 
 ;; (with-venv-advice-add 'blacken-buffer)
 
 ;; Adviced functions are always wrapped with `with-venv' macro when called.
 
-;; To remove these advices, you can use `with-venv-advice-remove'.
+;; Call `with-venv-advice-remove' to remove these advices.
 
 ;;; Code:
 
