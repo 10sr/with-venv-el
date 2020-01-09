@@ -131,7 +131,7 @@ session unless you explicitly invoke `with-venv-get-buffer-dir' command manually
   "Search for venv dir and set it to `with-venv--venv-dir-found'.
 
 If optional arg NO-REFRESH is non-nil and `with-venv--venv-dir-found' is
-already set, do not research venv dir again.
+already set, do not search for venv dir again.
 
 If suitable dir not found, set the value to empty string (\"\").
 Return value of `with-venv--venv-dir-found'."
