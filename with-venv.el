@@ -124,10 +124,7 @@ session unless you explicitly invoke `with-venv-get-buffer-dir' command manually
        ;; If set explicitly use it
        (or with-venv-venv-dir
            ;; Check previously used directory
-           (if (string= ""
-                        with-venv--venv-dir-found)
-               nil
-             (with-venv-get-buffer-dir t)))
+           (with-venv-get-buffer-dir t))
      ,@body))
 
 (defun with-venv-get-buffer-dir (&optional no-refresh)
