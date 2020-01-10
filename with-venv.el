@@ -144,7 +144,7 @@ Return value of `with-venv--venv-dir-found'."
   (interactive)
   (unless (and with-venv--venv-dir-found
                no-refresh)
-    (setq with-venv--venv-dir-found (or (with-venv-find-venv-dir)
+    (setq with-venv--venv-dir-found (or (with-venv--find-venv-dir)
                                         "")))
   with-venv--venv-dir-found)
 
@@ -162,8 +162,7 @@ See `with-venv-find-venv-dir' how this variable is used."
 (add-hook 'with-venv-find-venv-dir-functions
           'with-venv-find-venv-dir-dot-venv)
 
-;; Rename to --fnd-venv-dir?
-(defun with-venv-find-venv-dir (&optional dir)
+(defun with-venv--find-venv-dir (&optional dir)
   "Try to find venv dir for DIR.
 If none found return nil.
 
