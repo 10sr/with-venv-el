@@ -40,7 +40,7 @@ The automatic search result will be cached as a buffer-local variable, so
 `with-venv` try to find venv dir only at the first time it is used after
 visiting file.
 To explicitly update this cache (without restarting Emacs) after you created
-a virtual environment newly, run `M-x with-venv-get-buffer-dir` manually.
+a virtual environment newly, run `M-x with-venv-find-venv-dir` manually.
 
 
 If you want to always enable `with-venv` for certain functions,

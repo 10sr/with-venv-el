@@ -46,7 +46,7 @@
 ;; `with-venv' try to find venv dir only at the first time it is used after
 ;; visiting file.
 ;; To explicitly update this cache (without restarting Emacs) after you created
-;; a virtual environment newly, run M-x `with-venv-get-buffer-dir' manually.
+;; a virtual environment newly, run M-x `with-venv-find-venv-dir' manually.
 
 
 ;; If you want to always enable `with-venv' for certain functions,
@@ -107,11 +107,11 @@ If dir is nil or empty string (\"\"), execute BODY as usual."
 
 (defvar-local with-venv--venv-dir-found nil
   "Previously used venv dir path.
-Set by `with-venv-get-buffer-dir' using `with-venv-find-venv-dir-functions'.
+Set by `with-venv-find-venv-dir' using `with-venv-find-venv-dir-functions'.
 
 Default value nil means that venv search has not done for this buffer yet.
 When empty string (\"\"), it means that venv is not available for this buffer.
-To force search venv again, run `with-venv-get-buffer-dir' manually.
+To force search venv again, run `with-venv-find-venv-dir' manually.
 ")
 
 ;;;###autoload
@@ -121,19 +121,19 @@ To force search venv again, run `with-venv-get-buffer-dir' manually.
 This function tries to find suitable venv dir, or run BODY as usual when no
 suitable environment was found.
 
-This function calls `with-venv-get-buffer-dir' with no-refresh enabled to
+This function calls `with-venv-find-venv-dir' with no-refresh enabled to
 search venv dir for current buffer.
 The result will be cached so this search won't be done any more for current
-session unless you explicitly invoke `with-venv-get-buffer-dir' command manually."
+session unless you explicitly invoke `with-venv-find-venv-dir' command manually."
   (declare (indent 0) (debug t))
   `(with-venv-dir
        ;; If set explicitly use it
        (or with-venv-venv-dir
            ;; Check previously used directory
-           (with-venv-get-buffer-dir t))
+           (with-venv-find-venv-dir t))
      ,@body))
 
-(defun with-venv-get-buffer-dir (&optional no-refresh)
+(defun with-venv-find-venv-dir (&optional no-refresh)
   "Search for venv dir and set it to `with-venv--venv-dir-found'.
 
 If optional arg NO-REFRESH is non-nil and `with-venv--venv-dir-found' is
