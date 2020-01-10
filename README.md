@@ -31,10 +31,16 @@ with `with-venv`:
 
 
 This macro uses `with-venv-find-venv-dir-functions` to find suitable venv
-directory: this function currently support `pipenv`, `poetry`, and can find
-directories named `.venv`.
+directory: by default this supports `pipenv`, `poetry`, and directories named
+`".venv"`.
 Or, you can set buffer-local vairable `with-venv-venv-dir` to explicitly
-specify path venv directory.
+specify path of venv directory to disable this automatic search.
+
+The automatic search result will be cached as a buffer-local variable, so
+`with-venv` try to find venv dir only at the first time it is used after
+visiting file.
+To explicitly update this cache (without restarting Emacs) after you created
+a virtual environment newly, run `M-x with-venv-get-buffer-dir` manually.
 
 
 If you want to always enable `with-venv` for certain functions,
