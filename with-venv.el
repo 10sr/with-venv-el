@@ -23,30 +23,31 @@
 
 ;;; Commentary:
 
-;; Execute BODY with Python virtual environment activated with `with-venv-dir' macro:
+;; `with-venv-dir' macro executes BODY with Python virtual environment activated:
 
 ;; (with-venv-dir (expand-file-name ".venv" default-directory)
 ;;   (executable-find "python"))
 
 
-;; Alternatively, make this package try to find venv directory automatically
-;; with `with-venv':
+;; Alternatively, `with-venv' tries to find venv directory automatically:
 
 ;; (with-venv
 ;;   (executable-find "python"))
 
 
 ;; This macro uses `with-venv-find-venv-dir-functions' to find suitable venv
-;; directory: by default this supports pipenv, poetry, and directories named
+;; directory: by default it supports pipenv, poetry, and directories named
 ;; ".venv".
-;; Or, you can set buffer-local vairable `with-venv-venv-dir' to explicitly
-;; specify path of venv directory to disable this automatic search.
 
 ;; The automatic search result will be cached as a buffer-local variable, so
 ;; `with-venv' try to find venv dir only at the first time it is used after
 ;; visiting file.
 ;; To explicitly update this cache (without restarting Emacs) after you created
 ;; a virtual environment newly, run M-x `with-venv-find-venv-dir' manually.
+
+;; You can also set buffer-local vairable `with-venv-venv-dir' explicitly
+;; to specify venv directory for `with-venv' macro.
+;; In this case, the automatic search will be totally disabled for that buffer.
 
 
 ;; If you want to always enable `with-venv' for certain functions,
