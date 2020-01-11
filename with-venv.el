@@ -228,7 +228,7 @@ Otherwise returns nil."
   "Function to be used to advice functions with `with-venv-advice-add'.
 When a function is adviced with this function, it is wrapped with `with-venv'.
 
-ORIG-FUNC is the target function, and ARGS is the argument when it was called."
+ORIG-FUNC is the target function, and ARGS is the argument when it is called."
   (with-venv
     (apply orig-func args)))
 
