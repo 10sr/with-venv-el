@@ -31,7 +31,7 @@ Alternatively, `with-venv` tries to find venv directory automatically:
 
 This macro uses `with-venv-find-venv-dir-functions` to find suitable venv
 directory: by default it supports `pipenv`, `poetry`, and directories named
-`".venv"`.
+`".venv"` and `"venv"`.
 
 The automatic search result will be cached as a buffer-local variable, so
 `with-venv` try to find venv dir only at the first time it is used after

@@ -37,7 +37,7 @@
 
 ;; This macro uses `with-venv-find-venv-dir-functions' to find suitable venv
 ;; directory: by default it supports pipenv, poetry, and directories named
-;; ".venv".
+;; ".venv" and "venv".
 
 ;; The automatic search result will be cached as a buffer-local variable, so
 ;; `with-venv' try to find venv dir only at the first time it is used after
@@ -162,6 +162,8 @@ See `with-venv-find-venv-dir' how this variable is used."
           'with-venv-find-venv-dir-poetry)
 (add-hook 'with-venv-find-venv-dir-functions
           'with-venv-find-venv-dir-dot-venv)
+(add-hook 'with-venv-find-venv-dir-functions
+          'with-venv-find-venv-dir-venv)
 
 (defun with-venv--find-venv-dir (&optional dir)
   "Try to find venv dir for DIR.
@@ -201,6 +203,15 @@ This function processes `with-venv-find-venv-dir-functions' with
                                      ".venv/bin/python")))
     (when dir
       (expand-file-name ".venv"
+                        dir))))
+
+(defun with-venv-find-venv-dir-venv ()
+  "Try to find venv dir by its name."
+  (let ((dir (locate-dominating-file default-directory
+                                     ;; OK on windows?
+                                     "venv/bin/python")))
+    (when dir
+      (expand-file-name "venv"
                         dir))))
 
 ;;;###autoload
