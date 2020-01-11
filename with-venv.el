@@ -23,34 +23,41 @@
 
 ;;; Commentary:
 
-;; Execute BODY with Python virtual environment activated with `with-venv-dir' macro:
+;; `with-venv-dir' macro executes BODY with Python virtual environment activated:
 
 ;; (with-venv-dir (expand-file-name ".venv" default-directory)
 ;;   (executable-find "python"))
 
 
-;; Alternatively, make this package try to find venv directory automatically
-;; with `with-venv':
+;; Alternatively, `with-venv' tries to find venv directory automatically:
 
 ;; (with-venv
 ;;   (executable-find "python"))
 
 
-;; This macro uses `with-venv-find-venv-dir' to find suitable venv directory:
-;; this function currently support pipenv, poetry, and can find directories
-;; named ".venv".
-;; Or, you can set buffer-local vairable `with-venv-venv-dir' to explicitly
-;; specify which venv directory to use.
+;; This macro uses `with-venv-find-venv-dir-functions' to find suitable venv
+;; directory: by default it supports pipenv, poetry, and directories named
+;; ".venv".
+
+;; The automatic search result will be cached as a buffer-local variable, so
+;; `with-venv' try to find venv dir only at the first time it is used after
+;; visiting file.
+;; To explicitly update this cache (without restarting Emacs) after you created
+;; a virtual environment newly, run M-x `with-venv-find-venv-dir' manually.
+
+;; You can also set buffer-local vairable `with-venv-venv-dir' explicitly
+;; to specify venv directory for `with-venv' macro.
+;; In this case, the automatic search will be totally disabled for that buffer.
 
 
-;; If you want to always enable `with-venv' for certain functions, you can use
-;; `with-venv-advice-add':
+;; If you want to always enable `with-venv' for certain functions,
+;; `with-venv-advice-add' can be used for this purpose:
 
 ;; (with-venv-advice-add 'blacken-buffer)
 
 ;; Adviced functions are always wrapped with `with-venv' macro when called.
 
-;; To remove these advices, you can use `with-venv-advice-remove'.
+;; Call `with-venv-advice-remove' to remove these advices.
 
 ;;; Code:
 
@@ -63,15 +70,16 @@
 
 This variable is intended to be explicitly set by user.
 When nil, `with-venv' tries to find suitable venv dir.
-When this variable is set , use this value without checking if it is a valid
-python environment.")
+When empty string (\"\"), it means that venv is not available for this buffer.
+When this variable is set to non-empty string, use this value without checking
+if it is a valid python environment.")
 
 ;;;###autoload
 (defmacro with-venv-dir (dir &rest body)
   "Set python environment to DIR and execute BODY.
 
 This macro does not check if DIR is a valid python environemnt.
-If dir is nil, execute BODY as usual."
+If dir is nil or empty string (\"\"), execute BODY as usual."
   (declare (indent 1) (debug t))
   (let ((dirval (cl-gensym)))
     `(let ((,dirval ,dir)
@@ -79,7 +87,9 @@ If dir is nil, execute BODY as usual."
            (--with-venv-exec-path-orig (cl-copy-list exec-path)))
        (unwind-protect
            (progn
-             (when ,dirval
+             (when (and ,dirval
+                        (not (string= ,dirval
+                                      "")))
                (let* ((dir (file-name-as-directory ,dirval))
                       (bin (expand-file-name "bin" dir)))
                  ;; Do the same thing that bin/activate does
@@ -96,27 +106,54 @@ If dir is nil, execute BODY as usual."
                --with-venv-exec-path-orig)))))
 
 
-(defvar-local with-venv-previously-used nil
-  "Previously used venv dir path.")
+(defvar-local with-venv--venv-dir-found nil
+  "Previously used venv dir path.
+Set by `with-venv-find-venv-dir' using `with-venv-find-venv-dir-functions'.
+
+Default value nil means that venv search has not done for this buffer yet.
+When empty string (\"\"), it means that venv is not available for this buffer.
+To force search venv again, run `with-venv-find-venv-dir' manually.
+")
 
 ;;;###autoload
 (defmacro with-venv (&rest body)
   "Execute BODY with venv enabled.
 
 This function tries to find suitable venv dir, or run BODY as usual when no
-suitable environment was found."
+suitable environment was found.
+
+This function calls `with-venv-find-venv-dir' with no-refresh enabled to
+search venv dir for current buffer.
+The result will be cached so this search won't be done any more for current
+session unless you explicitly invoke `with-venv-find-venv-dir' command manually."
   (declare (indent 0) (debug t))
   `(with-venv-dir
        ;; If set explicitly use it
        (or with-venv-venv-dir
            ;; Check previously used directory
-           (with-venv-check-exists with-venv-previously-used)
-           (setq with-venv-previously-used (with-venv-find-venv-dir)))
+           (with-venv-find-venv-dir t))
      ,@body))
+
+(defun with-venv-find-venv-dir (&optional no-refresh)
+  "Search for venv dir and set it to `with-venv--venv-dir-found'.
+
+If optional arg NO-REFRESH is non-nil and `with-venv--venv-dir-found' is
+already set, do not search for venv dir again.
+
+If suitable dir not found, set the value to empty string (\"\").
+Return value of `with-venv--venv-dir-found'."
+  (interactive)
+  (unless (and with-venv--venv-dir-found
+               no-refresh)
+    (setq with-venv--venv-dir-found (or (with-venv--find-venv-dir)
+                                        "")))
+  with-venv--venv-dir-found)
 
 (defcustom with-venv-find-venv-dir-functions
   nil
-  "Functions to find venv dir."
+  "Functions to find venv dir.
+
+See `with-venv-find-venv-dir' how this variable is used."
   :type 'hook
   :group 'with-venv)
 (add-hook 'with-venv-find-venv-dir-functions
@@ -126,9 +163,12 @@ suitable environment was found."
 (add-hook 'with-venv-find-venv-dir-functions
           'with-venv-find-venv-dir-dot-venv)
 
-(defun with-venv-find-venv-dir (&optional dir)
+(defun with-venv--find-venv-dir (&optional dir)
   "Try to find venv dir for DIR.
-If none found return nil."
+If none found return nil.
+
+This function processes `with-venv-find-venv-dir-functions' with
+`run-hook-with-args-until-success'."
   (with-temp-buffer
     (when dir
       (cd dir))
@@ -164,7 +204,8 @@ If none found return nil."
                         dir))))
 
 (defun with-venv-check-exists (dir)
-  "Return DIR as is if \"bin\" directory was found under DIR."
+  "Return DIR as is if \"bin\" directory was found under DIR.
+Otherwise returns nil."
   (and dir
        (file-directory-p (expand-file-name "bin"
                                            dir))

@@ -13,7 +13,7 @@ Usage
 -----
 
 
-Execute BODY with Python virtual environment activated with `with-venv-dir` macro:
+`with-venv-dir` macro executes BODY with Python virtual environment activated:
 
 ``` emacs-lisp
 (with-venv-dir (expand-file-name ".venv" default-directory)
@@ -21,8 +21,7 @@ Execute BODY with Python virtual environment activated with `with-venv-dir` macr
 ```
 
 
-Alternatively, make this package try to find venv directory automatically
-with `with-venv`:
+Alternatively, `with-venv` tries to find venv directory automatically:
 
 ``` emacs-lisp
 (with-venv
@@ -30,15 +29,23 @@ with `with-venv`:
 ```
 
 
-This macro uses `with-venv-find-venv-dir` to find suitable venv directory:
-this function currently support `pipenv`, `poetry`, and can find directories
-named `.venv`.
-Or, you can set buffer-local vairable `with-venv-venv-dir` to explicitly
-specify which venv directory to use.
+This macro uses `with-venv-find-venv-dir-functions` to find suitable venv
+directory: by default it supports `pipenv`, `poetry`, and directories named
+`".venv"`.
+
+The automatic search result will be cached as a buffer-local variable, so
+`with-venv` try to find venv dir only at the first time it is used after
+visiting file.
+To explicitly update this cache (without restarting Emacs) after you created
+a virtual environment newly, run `M-x with-venv-find-venv-dir` manually.
+
+You can also set buffer-local vairable `with-venv-venv-dir` explicitly
+to specify venv directory for `with-venv` macro.
+In this case, the automatic search will be totally disabled for that buffer.
 
 
-If you want to always enable `with-venv` for certain functions, you can use
-`with-venv-advice-add`:
+If you want to always enable `with-venv` for certain functions,
+`with-venv-advice-add` can be used for this purpose:
 
 ``` emacs-lisp
 (with-venv-advice-add 'blacken-buffer)
@@ -46,7 +53,7 @@ If you want to always enable `with-venv` for certain functions, you can use
 
 Adviced functions are always wrapped with `with-venv` macro when called.
 
-To remove these advices, you can use `with-venv-advice-remove`.
+Call `with-venv-advice-remove` to remove these advices.
 
 
 License
