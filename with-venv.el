@@ -197,19 +197,11 @@ This function processes `with-venv-find-venv-dir-functions' with
 (defun with-venv-find-venv-dir-dot-venv ()
   "Try to find venv dir by its name."
   (let ((dir (locate-dominating-file default-directory
-                                     ".venv")))
+                                     ;; OK on windows?
+                                     ".venv/bin/python")))
     (when dir
-      ;; TODO: check with -check-exists
       (expand-file-name ".venv"
                         dir))))
-
-(defun with-venv-check-exists (dir)
-  "Return DIR as is if \"bin\" directory was found under DIR.
-Otherwise returns nil."
-  (and dir
-       (file-directory-p (expand-file-name "bin"
-                                           dir))
-       dir))
 
 ;;;###autoload
 (defun with-venv-advice-add (func)
