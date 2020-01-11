@@ -216,14 +216,14 @@ This function processes `with-venv-find-venv-dir-functions' with
 
 ;;;###autoload
 (defun with-venv-advice-add (func)
-  "Setup advice so that FUNC use `with-env' macro when executing."
+  "Setup advice so that `with-venv' macro is always applied to FUNC."
   (advice-add func
               :around
               'with-venv--advice-around))
 
 ;;;###autoload
 (defun with-venv-advice-remove (func)
-  "Remove advice FUNC added by `with-venv-advice-add'."
+  "Remove advice of FUNC added by `with-venv-advice-add'."
   (advice-remove func
                  'with-venv--advice-around))
 
