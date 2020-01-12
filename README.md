@@ -13,21 +13,12 @@ Usage
 -----
 
 
-`with-venv-dir` macro executes BODY with Python virtual environment activated:
-
-``` emacs-lisp
-(with-venv-dir (expand-file-name ".venv" default-directory)
-  (executable-find "python"))
-```
-
-
-Alternatively, `with-venv` tries to find venv directory automatically:
+`with-venv` macro executes BODY with Python virtual environment activated:
 
 ``` emacs-lisp
 (with-venv
   (executable-find "python"))
 ```
-
 
 This macro uses `with-venv-find-venv-dir-functions` to find suitable venv
 directory: by default it supports `pipenv`, `poetry`, and directories named
