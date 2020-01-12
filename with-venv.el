@@ -162,13 +162,17 @@ See `with-venv-find-venv-dir' how this variable is used."
   :type 'hook
   :group 'with-venv)
 (add-hook 'with-venv-find-venv-dir-functions
-          'with-venv-find-venv-dir-pipenv)
+          'with-venv-find-venv-dir-pipenv
+          t)
 (add-hook 'with-venv-find-venv-dir-functions
-          'with-venv-find-venv-dir-poetry)
+          'with-venv-find-venv-dir-poetry
+          t)
 (add-hook 'with-venv-find-venv-dir-functions
-          'with-venv-find-venv-dir-dot-venv)
+          'with-venv-find-venv-dir-dot-venv
+          t)
 (add-hook 'with-venv-find-venv-dir-functions
-          'with-venv-find-venv-dir-venv)
+          'with-venv-find-venv-dir-venv
+          t)
 
 (defun with-venv--find-venv-dir (&optional dir)
   "Try to find venv dir for DIR.
