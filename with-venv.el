@@ -74,11 +74,6 @@ When empty string (\"\"), it means that venv is not available for this buffer.
 When this variable is set to non-empty string, use this value without checking
 if it is a valid python environment.")
 
-(defvar-local with-venv-found-type nil
-  "Current `with-venv' found state.
-
-Used by `with-venv-info-mode'.")
-
 ;;;###autoload
 (defmacro with-venv-dir (dir &rest body)
   "Set python environment to DIR and execute BODY.
@@ -120,6 +115,14 @@ When empty string (\"\"), it means that venv is not available for this buffer.
 To force search venv again, run `with-venv-find-venv-dir' manually.
 ")
 
+(defvar-local with-venv-found-type nil
+  "Current `with-venv' found state.
+
+Used by `with-venv-info-mode'.")
+
+(defvar with-venv--last-found-type nil
+  "Last found type.")
+
 ;;;###autoload
 (defmacro with-venv (&rest body)
   "Execute BODY with venv enabled.
@@ -151,7 +154,13 @@ Return value of `with-venv--venv-dir-found'."
   (unless (and with-venv--venv-dir-found
                no-refresh)
     (setq with-venv--venv-dir-found (or (with-venv--find-venv-dir)
-                                        "")))
+                                        ""))
+    ;; FIXME: Not work when called in parallel
+    (setq with-venv-found-type
+          with-venv--last-found-type)
+    (setq with-venv--last-found-type
+          nil)
+    )
   with-venv--venv-dir-found)
 
 (defcustom with-venv-find-venv-dir-functions
@@ -190,7 +199,7 @@ This function processes `with-venv-find-venv-dir-functions' with
   (with-temp-buffer
     (let ((status (call-process "pipenv" nil t nil "--venv")))
       (when (eq status 0)
-        (setq with-venv-found-type "Pipenv")
+        (setq with-venv--last-found-type "Pipenv")
         (goto-char (point-min))
         (buffer-substring-no-properties (point-at-bol)
                                         (point-at-eol))))))
@@ -204,7 +213,7 @@ This function processes `with-venv-find-venv-dir-functions' with
         (goto-char (point-min))
         (save-match-data
           (when (re-search-forward "^ \\* Path: *\\(.*\\)$")
-            (setq with-venv-found-type "Poetry")
+            (setq with-venv--last-found-type "Poetry")
             (match-string 1)))))))
 
 (defun with-venv-find-venv-dir-dot-venv ()
@@ -213,7 +222,7 @@ This function processes `with-venv-find-venv-dir-functions' with
                                      ;; OK on windows?
                                      ".venv/bin/python")))
     (when dir
-      (setq with-venv-found-type ".venv/")
+      (setq with-venv--last-found-type ".venv/")
       (expand-file-name ".venv"
                         dir))))
 
@@ -223,7 +232,7 @@ This function processes `with-venv-find-venv-dir-functions' with
                                      ;; OK on windows?
                                      "venv/bin/python")))
     (when dir
-      (setq with-venv-found-type "venv/")
+      (setq with-venv--last-found-type "venv/")
       (expand-file-name "venv"
                         dir))))
 
