@@ -261,7 +261,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
                              with-venv--venv-dir-found)
                     "-"
                   (or with-venv-found-type
-                      "N/A")))))
+                      "?")))))
     (format " W/V[%s]"
             type)))
 
