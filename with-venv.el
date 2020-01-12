@@ -109,7 +109,7 @@ To force search venv again, run `with-venv-find-venv-dir' manually.
 ")
 
 (defvar-local with-venv-found-type nil
-  "Current `with-venv' found state.
+  "`with-venv' directory type of current buffer.
 
 Used by `with-venv-info-mode'.")
 
@@ -267,7 +267,7 @@ ORIG-FUNC is the target function, and ARGS is the argument when it is called."
 
 ;;;###autoload
 (define-minor-mode with-venv-info-mode
-  "Minor-mode to show current `with-venv' activated directory."
+  "Minor-mode to show info about current `with-venv' activated directory."
   :lighter (:eval (with-venv-info-lighter))
   nil)
 
