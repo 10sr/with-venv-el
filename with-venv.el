@@ -200,7 +200,16 @@ This function processes `with-venv-find-venv-dir-functions' with
 (defun with-venv-find-venv-dir-poetry ()
   "Try to find venv dir via poetry."
   (with-temp-buffer
-    ;; TODO: Use poetry env info --path
+    (let ((status (call-process "poetry" nil t nil "env" "info" "--path")))
+      (when (eq status 0)
+        (setq with-venv--last-found-type "Poetry")
+        (goto-char (point-min))
+        (buffer-substring-no-properties (point-at-bol)
+                                        (point-at-eol))))))
+
+(defun with-venv-find-venv-dir-poetry-legacy ()
+  "Try to find venv dir via poetry debug:info command."
+  (with-temp-buffer
     (let ((status (call-process "poetry" nil t nil "debug:info")))
       (when (eq status 0)
         (goto-char (point-min))
