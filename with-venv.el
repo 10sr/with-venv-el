@@ -189,34 +189,37 @@ This function processes `with-venv-find-venv-dir-functions' with
 
 (defun with-venv-find-venv-dir-pipenv ()
   "Try to find venv dir via pipenv."
-  (with-temp-buffer
-    (let ((status (call-process "pipenv" nil t nil "--venv")))
-      (when (eq status 0)
-        (setq with-venv--last-found-type "Pipenv")
-        (goto-char (point-min))
-        (buffer-substring-no-properties (point-at-bol)
-                                        (point-at-eol))))))
+  (when (executable-find "pipenv")
+    (with-temp-buffer
+      (let ((status (call-process "pipenv" nil t nil "--venv")))
+        (when (eq status 0)
+          (setq with-venv--last-found-type "Pipenv")
+          (goto-char (point-min))
+          (buffer-substring-no-properties (point-at-bol)
+                                          (point-at-eol)))))))
 
 (defun with-venv-find-venv-dir-poetry ()
   "Try to find venv dir via poetry."
-  (with-temp-buffer
-    (let ((status (call-process "poetry" nil t nil "env" "info" "--path")))
-      (when (eq status 0)
-        (setq with-venv--last-found-type "Poetry")
-        (goto-char (point-min))
-        (buffer-substring-no-properties (point-at-bol)
-                                        (point-at-eol))))))
+  (when (executable-find "poetry")
+    (with-temp-buffer
+      (let ((status (call-process "poetry" nil t nil "env" "info" "--path")))
+        (when (eq status 0)
+          (setq with-venv--last-found-type "Poetry")
+          (goto-char (point-min))
+          (buffer-substring-no-properties (point-at-bol)
+                                          (point-at-eol)))))))
 
 (defun with-venv-find-venv-dir-poetry-legacy ()
   "Try to find venv dir via poetry debug:info command."
-  (with-temp-buffer
-    (let ((status (call-process "poetry" nil t nil "debug:info")))
-      (when (eq status 0)
-        (goto-char (point-min))
-        (save-match-data
-          (when (re-search-forward "^ \\* Path: *\\(.*\\)$")
-            (setq with-venv--last-found-type "Poetry")
-            (match-string 1)))))))
+  (when (executable-find "poetry")
+    (with-temp-buffer
+      (let ((status (call-process "poetry" nil t nil "debug:info")))
+        (when (eq status 0)
+          (goto-char (point-min))
+          (save-match-data
+            (when (re-search-forward "^ \\* Path: *\\(.*\\)$")
+              (setq with-venv--last-found-type "Poetry")
+              (match-string 1))))))))
 
 (defun with-venv-find-venv-dir-dot-venv ()
   "Try to find venv dir by its name."
