@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/10sr/with-venv-el.svg?branch=master)](https://travis-ci.org/10sr/with-venv-el)
+[![build](https://github.com/10sr/with-venv-el/actions/workflows/build.yaml/badge.svg)](https://github.com/10sr/with-venv-el/actions/workflows/build.yaml)
 [![MELPA](https://melpa.org/packages/with-venv-badge.svg)](https://melpa.org/#/with-venv)
 [![MELPA Stable](https://stable.melpa.org/packages/with-venv-badge.svg)](https://stable.melpa.org/#/with-venv)
 
