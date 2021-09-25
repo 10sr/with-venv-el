@@ -93,7 +93,10 @@ If dir is nil or empty string (\"\"), execute BODY as usual."
                        (cons bin
                              exec-path))
                  (setenv "VIRTUAL_ENV" dir)
-                 (setenv "PATH" (concat bin ":" (or (getenv "PATH") "")))
+                 (setenv "PATH" (if (string= ""
+                                             (or (getenv "PATH") ""))
+                                    bin
+                                  (concat bin ":" (getenv "PATH"))))
                  (setenv "PYTHONHOME")))
              ,@body)
          (setq process-environment
