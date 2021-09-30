@@ -31,6 +31,6 @@ test-ert: $(ERT_TESTS) $(OBJS)
 	$(EMACS) $(BATCHFLAGS) \
 		--eval "(setq debug-on-error t)" \
 		--eval "(require 'ert)" \
-		--eval "(setq tests-target-files '($(SRC:%=\"%\")))" \
+		--eval "(setq tests-target-files '($(SRCS:%=\"%\")))" \
 		$(ERT_TESTS:%=-l "%") \
 		-f ert-run-tests-batch-and-exit
