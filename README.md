@@ -20,7 +20,7 @@ Usage
   (executable-find "python"))
 ```
 
-This macro searchs for suitable venv directory for current evironment
+This macro searchs for suitable venv directory for current environment
 automatically: by default it supports `pipenv`, `poetry`, and directories
 named `".venv"` and `"venv"`.
 You can modify `with-venv-find-venv-dir-functions` to add or remove
